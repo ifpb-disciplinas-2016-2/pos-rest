@@ -10,9 +10,10 @@ import javax.ws.rs.core.Application;
 
 /**
  *
+<<<<<<< HEAD
  * @author Victor Hugo <victor.hugo.origins@gmail.com>
  */
-@javax.ws.rs.ApplicationPath("ws")
+@javax.ws.rs.ApplicationPath("api")
 public class ApplicationConfig extends Application {
 
     @Override
@@ -30,6 +31,7 @@ public class ApplicationConfig extends Application {
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(ifpb.dac.pos.resources.ClientResources.class);
+        resources.add(ifpb.dac.pos.resources.ProductResource.class);
     }
     
 }
