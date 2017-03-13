@@ -8,7 +8,6 @@ package ifpb.dac.pos.resources;
 import ifpb.dac.pos.entity.Product;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.ws.rs.Consumes;
@@ -26,33 +25,31 @@ import javax.ws.rs.core.Response;
  */
 @Path("products")
 public class ProductResource {
-   
+
     private static final List<Product> products = Arrays.asList(new Product(1L, "tv", "TV 32''"));
-   
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Product> getAll(){
-            
+    public List<Product> getAll() {
+//        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?> <e>teste</e>";
         return products;
-        
     }
-    
+
     @GET
     @Path("/{id}")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Product showProduct(@PathParam("id") int id) {
         return products.get(id);
     }
-    
+
     @PUT
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response addProduct(Product product) throws URISyntaxException {
-        
+
         products.add(product);
         product.setID(new Long(products.size() + 1));
-        
-        return Response.created(new URI("/product" + product.getID())).entity(product).build();    
+
+        return Response.created(new URI("/product" + product.getID())).entity(product).build();
     }
-    
-    
+
 }
