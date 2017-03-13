@@ -13,9 +13,10 @@ import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -26,20 +27,23 @@ import javax.ws.rs.core.Response;
 @Path("/client")
 public class ClientResources {
 
-    private static final List<Client> clients = new ArrayList<>();
+    private static final List<Client> CLIENTS = new ArrayList<>();
 
     @GET
+    @Produces(value = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response getAll() {
+        
+        GenericEntity<List<Client>> entityResponse = new GenericEntity<List<Client>>(CLIENTS){};
 
-        return Response.ok().entity(clients).build();
+        return Response.ok().entity(entityResponse).build();
     }
 
     @POST
     @Consumes(value = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response addClient(Client client) throws URISyntaxException {
 
-        clients.add(client);
-        client.setId(clients.size() - 1);
+        CLIENTS.add(client);
+        client.setId(CLIENTS.size() - 1);
 
         return Response.created(new URI("/client/" + client.getId())).entity(client).build();
     }
@@ -52,7 +56,7 @@ public class ClientResources {
 
         try {
 
-            client = clients.get(id);
+            client = CLIENTS.get(id);
         } catch (Exception ex) {
         }
 
