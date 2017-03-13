@@ -1,7 +1,7 @@
 mvn clean install
 docker stop rest
 docker rm rest
-docker rmi natarajan/pos-rest
-docker build -t natarajan/pos-rest .
-docker run -p 8080:8080 -d --name rest natarajan/pos-rest
+docker rmi victor/pos-rest
+docker build -t victor/pos-rest .
+docker run -p 8080:8080 -d --name rest victor/pos-rest
 

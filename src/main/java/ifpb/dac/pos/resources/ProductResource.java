@@ -37,6 +37,7 @@ public class ProductResource {
         };
 
         return Response.ok().entity(entityResponse).build();
+
     }
 
     @GET
