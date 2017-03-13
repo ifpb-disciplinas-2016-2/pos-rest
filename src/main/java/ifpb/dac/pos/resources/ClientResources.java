@@ -11,8 +11,10 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -32,8 +34,9 @@ public class ClientResources {
     @GET
     @Produces(value = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response getAll() {
-        
-        GenericEntity<List<Client>> entityResponse = new GenericEntity<List<Client>>(CLIENTS){};
+
+        GenericEntity<List<Client>> entityResponse = new GenericEntity<List<Client>>(CLIENTS) {
+        };
 
         return Response.ok().entity(entityResponse).build();
     }
@@ -45,7 +48,7 @@ public class ClientResources {
         CLIENTS.add(client);
         client.setId(CLIENTS.size() - 1);
 
-        return Response.created(new URI("/client/" + client.getId())).entity(client).build();
+        return Response.created(new URI("/pos-rest/ws/client/" + client.getId())).entity(client).build();
     }
 
     @GET
@@ -73,10 +76,59 @@ public class ClientResources {
         return response;
     }
 
-//    @PUT
-//    @Path("/id")
-//    public Response updateClient(@PathParam("id") int id, Client client){
-//        
-//        
-//    }
+    @PUT
+    @Path("/{id}")
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public Response updateClient(@PathParam("id") int id, Client newClient) throws URISyntaxException {
+
+        Client client = null;
+
+        try {
+
+            client = CLIENTS.get(id);
+        } catch (Exception ex) {
+        }
+
+        Response response;
+
+        if (client == null) {
+
+            response = Response.status(Response.Status.NOT_FOUND).build();
+        } else {
+
+            CLIENTS.set(id, newClient);
+
+            response = Response.ok().entity(newClient).location(new URI("/pos-rest/ws/client/" + id)).build();
+        }
+
+        return response;
+
+    }
+
+    @DELETE
+    @Path("/{id}")
+    public Response deleteClient(@PathParam("id") int id) {
+
+        Client client = null;
+
+        try {
+
+            client = CLIENTS.get(id);
+        } catch (Exception ex) {
+        }
+
+        Response response;
+
+        if (client == null) {
+
+            response = Response.status(Response.Status.NOT_FOUND).build();
+        } else {
+            
+            CLIENTS.remove(client);
+            response = Response.ok().build();
+        }
+
+        return response;
+    }
+
 }
