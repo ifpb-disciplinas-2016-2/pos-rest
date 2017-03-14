@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ifpb.dac.pos.resources;
+package ifpb.pos.resources;
 
-import ifpb.dac.pos.entity.Client;
+import ifpb.pos.entity.Client;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
