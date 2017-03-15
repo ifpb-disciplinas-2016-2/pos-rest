@@ -73,7 +73,7 @@ public class ProductResource {
         return Response
                 .ok()
                 .entity(produtoRetorno)
-                .location(new URI("/pos-rest/ws/client/" + id))
+                .location(new URI("/pos-rest/ws/product/" + id))
                 .build();
     }
 

@@ -10,6 +10,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -27,17 +30,19 @@ import javax.ws.rs.core.Response;
  * @author Victor Hugo <victor.hugo.origins@gmail.com>
  */
 @Path("/client")
+@Stateless
 public class ClientResources {
 
-    private static final List<Client> CLIENTS = new ArrayList<>();
+    @PersistenceContext
+    private EntityManager em;
 
     @GET
     @Produces(value = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response getAll() {
 
-        GenericEntity<List<Client>> entityResponse = new GenericEntity<List<Client>>(CLIENTS) {
+        List<Client> resultList = em.createQuery("SELECT c FROM Client c", Client.class).getResultList();
+        GenericEntity<List<Client>> entityResponse = new GenericEntity<List<Client>>(resultList) {
         };
-
         return Response.ok().entity(entityResponse).build();
     }
 
@@ -45,35 +50,23 @@ public class ClientResources {
     @Consumes(value = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response addClient(Client client) throws URISyntaxException {
 
-        CLIENTS.add(client);
-        client.setId(CLIENTS.size() - 1);
-
-        return Response.created(new URI("/pos-rest/ws/client/" + client.getId())).entity(client).build();
+        em.persist(client);
+        return Response
+                .created(new URI("/pos-rest/ws/product/" + client.getId()))
+                .entity(client)
+                .build();
     }
 
     @GET
     @Path("/{id}")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response getClient(@PathParam("id") int id) {
 
-        Client client = null;
-
-        try {
-
-            client = CLIENTS.get(id);
-        } catch (Exception ex) {
-        }
-
-        Response response;
-
+        Client client = em.find(Client.class, id);
         if (client == null) {
-
-            response = Response.status(Response.Status.NOT_FOUND).build();
-        } else {
-
-            response = Response.ok().entity(client).build();
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
-
-        return response;
+        return Response.ok().entity(client).build();
     }
 
     @PUT
@@ -81,27 +74,16 @@ public class ClientResources {
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response updateClient(@PathParam("id") int id, Client newClient) throws URISyntaxException {
 
-        Client client = null;
-
-        try {
-
-            client = CLIENTS.get(id);
-        } catch (Exception ex) {
+        newClient.setId(id);
+        Client clienteRetorno = em.merge(newClient);
+        if (clienteRetorno == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
-
-        Response response;
-
-        if (client == null) {
-
-            response = Response.status(Response.Status.NOT_FOUND).build();
-        } else {
-
-            CLIENTS.set(id, newClient);
-
-            response = Response.ok().entity(newClient).location(new URI("/pos-rest/ws/client/" + id)).build();
-        }
-
-        return response;
+        return Response
+                .ok()
+                .entity(clienteRetorno)
+                .location(new URI("/pos-rest/ws/client/" + id))
+                .build();
 
     }
 
@@ -109,26 +91,16 @@ public class ClientResources {
     @Path("/{id}")
     public Response deleteClient(@PathParam("id") int id) {
 
-        Client client = null;
-
-        try {
-
-            client = CLIENTS.get(id);
-        } catch (Exception ex) {
+        Client clienteRetorno = em.find(Client.class, id);
+        if (clienteRetorno == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
-
-        Response response;
-
-        if (client == null) {
-
-            response = Response.status(Response.Status.NOT_FOUND).build();
-        } else {
-            
-            CLIENTS.remove(client);
-            response = Response.ok().build();
-        }
-
-        return response;
+        em.remove(clienteRetorno);
+        return Response
+                .ok()
+                .entity(clienteRetorno)
+//                .noContent()
+                .build();
     }
 
 }
