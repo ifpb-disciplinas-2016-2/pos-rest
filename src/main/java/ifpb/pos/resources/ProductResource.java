@@ -1,15 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ifpb.pos.resources;
 
 import ifpb.pos.entity.Product;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -27,119 +24,72 @@ import javax.ws.rs.core.Response;
  * @author natarajan && Victor Hugo
  */
 @Path("product")
+@Stateless
 public class ProductResource {
 
-    private static List<Product> PRODUCTS = new ArrayList<Product>();
+    @PersistenceContext
+    private EntityManager em;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
-
-        GenericEntity<List<Product>> entityResponse = new GenericEntity<List<Product>>(PRODUCTS) {
+        List<Product> resultList = em.createQuery("SELECT p FROM Product p", Product.class).getResultList();
+        GenericEntity<List<Product>> entityResponse = new GenericEntity<List<Product>>(resultList) {
         };
-
         return Response.ok().entity(entityResponse).build();
 
     }
 
     @GET
     @Path("/{id}")
-//    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response showProduct(@PathParam("id") int id) {
-        Product product = null;
-        
-        try {
-            product = PRODUCTS.get(id - 1);
-        } catch(Exception e){
-            
-        }
-        
-        Response response;
-        
+        Product product = em.find(Product.class, id);
         if (product == null) {
-            
-            response = Response.status(Response.Status.NOT_FOUND).build();
-            
-        } else {
-            
-            response = Response.ok().entity(product).build();
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
-        
-        return response;
-         
+        return Response.ok().entity(product).build();
+    }
+
+    @POST
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public Response addProduct(Product product) throws URISyntaxException {
+        em.persist(product);
+        return Response
+                .created(new URI("/pos-rest/ws/product/" + product.getId()))
+                .entity(product)
+                .build();
     }
 
     @PUT
-    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Response addProduct(Product product) throws URISyntaxException {
-
-        PRODUCTS.add(product);
-        product.setId(PRODUCTS.size());
-
-        return Response.created(new URI("/pos-rest/ws/product/" + product.getId())).entity(product).build();
-    }
-    
-    @POST
     @Path("/{id}")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response updateProduct(@PathParam("id") int id, Product product) throws URISyntaxException {
-
-        Product myProduct = null;
-
-        try {
-            
-            myProduct = PRODUCTS.get(id - 1);
-            
-        } catch (Exception ex) {
+        product.setId(id);
+        Product produtoRetorno = em.merge(product);
+        if (produtoRetorno == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
-
-        Response response;
-
-        if (myProduct == null) {
-
-            response = Response.status(Response.Status.NOT_FOUND).build();
-        
-        } else {
-
-            myProduct.setName(product.getName());
-            myProduct.setDescription(product.getDescription());
-            
-            PRODUCTS.set(myProduct.getId() - 1, myProduct);
-
-            response = Response.ok().entity(myProduct).location(new URI("/pos-rest/ws/client/" + id)).build();
-        }
-
-        return response;
-
+        return Response
+                .ok()
+                .entity(produtoRetorno)
+                .location(new URI("/pos-rest/ws/client/" + id))
+                .build();
     }
 
     @DELETE
     @Path("/{id}")
     public Response deleteProduct(@PathParam("id") int id) {
-
-        Product product = null;
-
-        try {
-
-            product = PRODUCTS.get(id - 1);
-            
-        } catch (Exception ex) {
+        Product produtoRetorno = em.find(Product.class, id);
+        if (produtoRetorno == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
-
-        Response response;
-
-        if (product == null) {
-
-            response = Response.status(Response.Status.NOT_FOUND).build();
-            
-        } else {
-            
-            PRODUCTS.remove(product);
-            response = Response.ok().build();
-            
-        }
-
-        return response;
+        em.remove(produtoRetorno);
+        return Response
+                .ok()
+                .entity(produtoRetorno)
+//                .noContent()
+                .build();
     }
 
 }

@@ -7,6 +7,9 @@ package ifpb.pos.entity;
 
 import java.io.Serializable;
 import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -14,8 +17,11 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Victor Hugo <victor.hugo.origins@gmail.com>
  */
 @XmlRootElement
-public class Client implements Serializable{
-    
+@Entity
+public class Client implements Serializable {
+
+    @Id
+    @GeneratedValue
     private int id;
     private String name;
     private String cpf;
@@ -84,7 +90,7 @@ public class Client implements Serializable{
         }
         return true;
     }
-    
+
     @Override
     public String toString() {
         return "Client{" + "id=" + id + ", name=" + name + ", cpf=" + cpf + '}';

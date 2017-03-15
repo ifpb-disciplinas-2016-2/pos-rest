@@ -6,6 +6,9 @@
 package ifpb.pos.entity;
 
 import java.io.Serializable;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -13,8 +16,11 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author natarajan && Victor Hugo
  */
 @XmlRootElement
+@Entity
 public class Product implements Serializable {
 
+    @Id
+    @GeneratedValue
     private int id;
     private String name;
     private String description;
@@ -56,7 +62,7 @@ public class Product implements Serializable {
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
     @Override
     public String toString() {
         return "Product{" + "id=" + id + ", name=" + name + ", description=" + description + '}';
