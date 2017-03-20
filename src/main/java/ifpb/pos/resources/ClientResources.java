@@ -8,9 +8,7 @@ package ifpb.pos.resources;
 import ifpb.pos.entity.Client;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
-import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.Consumes;
@@ -30,7 +28,7 @@ import javax.ws.rs.core.Response;
  * @author Victor Hugo <victor.hugo.origins@gmail.com>
  */
 @Path("/client")
-@Stateless
+//@Stateless
 public class ClientResources {
 
     @PersistenceContext
@@ -50,11 +48,14 @@ public class ClientResources {
     @Consumes(value = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response addClient(Client client) throws URISyntaxException {
 
+
         em.persist(client);
+
         return Response
-                .created(new URI("/pos-rest/ws/product/" + client.getId()))
+                .created(new URI("/pos-rest/ws/client/" + client.getId()))
                 .entity(client)
                 .build();
+
     }
 
     @GET
@@ -99,7 +100,7 @@ public class ClientResources {
         return Response
                 .ok()
                 .entity(clienteRetorno)
-//                .noContent()
+                //                .noContent()
                 .build();
     }
 
