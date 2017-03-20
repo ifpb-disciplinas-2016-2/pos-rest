@@ -5,12 +5,14 @@
  */
 package ifpb.pos.entity;
 
+import ifpb.pos.resources.adapters.IdApater;
 import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -22,6 +24,7 @@ public class Client implements Serializable {
 
     @Id
     @GeneratedValue
+    @XmlJavaTypeAdapter(IdApater.class)
     private int id;
     private String name;
     private String cpf;

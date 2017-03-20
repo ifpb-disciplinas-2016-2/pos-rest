@@ -5,11 +5,13 @@
  */
 package ifpb.pos.entity;
 
+import ifpb.pos.resources.adapters.IdApater;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -21,6 +23,7 @@ public class Product implements Serializable {
 
     @Id
     @GeneratedValue
+    @XmlJavaTypeAdapter(IdApater.class)
     private int id;
     private String name;
     private String description;
