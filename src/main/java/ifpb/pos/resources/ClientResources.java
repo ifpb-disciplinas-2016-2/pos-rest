@@ -9,6 +9,7 @@ import ifpb.pos.entity.Client;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.Consumes;
@@ -28,14 +29,14 @@ import javax.ws.rs.core.Response;
  * @author Victor Hugo <victor.hugo.origins@gmail.com>
  */
 @Path("/client")
-//@Stateless
+@Stateless
 public class ClientResources {
 
     @PersistenceContext
     private EntityManager em;
 
     @GET
-    @Produces(value = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces(value = {MediaType.APPLICATION_JSON})
     public Response getAll() {
 
         List<Client> resultList = em.createQuery("SELECT c FROM Client c", Client.class).getResultList();
@@ -46,6 +47,7 @@ public class ClientResources {
 
     @POST
     @Consumes(value = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces(MediaType.APPLICATION_JSON)
     public Response addClient(Client client) throws URISyntaxException {
 
 
@@ -73,6 +75,7 @@ public class ClientResources {
     @PUT
     @Path("/{id}")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces(MediaType.APPLICATION_JSON)
     public Response updateClient(@PathParam("id") int id, Client newClient) throws URISyntaxException {
 
         newClient.setId(id);
@@ -90,6 +93,7 @@ public class ClientResources {
 
     @DELETE
     @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response deleteClient(@PathParam("id") int id) {
 
         Client clienteRetorno = em.find(Client.class, id);

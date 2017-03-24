@@ -41,9 +41,9 @@ public class ProductResource {
     }
 
     @GET
-    @Path("/{id}")
+    @Path("/{idOrder}")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Response showProduct(@PathParam("id") int id) {
+    public Response showProduct(@PathParam("idOrder") int id) {
         Product product = em.find(Product.class, id);
         if (product == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -53,6 +53,7 @@ public class ProductResource {
 
     @POST
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces(MediaType.APPLICATION_JSON)
     public Response addProduct(Product product) throws URISyntaxException {
         em.persist(product);
         return Response
@@ -64,6 +65,7 @@ public class ProductResource {
     @PUT
     @Path("/{id}")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces(MediaType.APPLICATION_JSON)
     public Response updateProduct(@PathParam("id") int id, Product product) throws URISyntaxException {
         product.setId(id);
         Product produtoRetorno = em.merge(product);
@@ -79,6 +81,7 @@ public class ProductResource {
 
     @DELETE
     @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response deleteProduct(@PathParam("id") int id) {
         Product produtoRetorno = em.find(Product.class, id);
         if (produtoRetorno == null) {

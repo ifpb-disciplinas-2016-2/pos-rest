@@ -37,6 +37,7 @@ public class OrderResources {
     //criar a venda?
     @POST
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces(MediaType.APPLICATION_JSON)
     public Response newOrder(@Context UriInfo uriInfo) throws URISyntaxException {
         Order order = new Order();
         em.persist(order);
@@ -80,10 +81,10 @@ public class OrderResources {
                 .build(); 
     } */
     @Path("{idOrder}/client/{idClient}")
-    public SubOrderResources addClient() {
+    public OrderClientSubResources addClient() {
         //http://www.oracle.com/technetwork/pt/articles/java/java-ee7-y-jax-rs-2-2109106-ptb.html
         return this.resourceContext
-                .getResource(SubOrderResources.class);
+                .getResource(OrderClientSubResources.class);
     }
 
     /*
@@ -104,9 +105,9 @@ public class OrderResources {
                 .build();
     } */
     @Path("{idOrder}/product/{idProduct}")
-    public SubOrderResources addProduct() {
+    public OrderProductSubResources addProduct() {
         return this.resourceContext
-                .getResource(SubOrderResources.class);
+                .getResource(OrderProductSubResources.class);
 
     }
 
@@ -124,9 +125,9 @@ public class OrderResources {
         return Response.ok().entity(orderSimple).build();
     } */
     @Path("{idOrder}")
-    public SubOrderResources get() {
+    public OrderClientSubResources get() {
         return this.resourceContext
-                .getResource(SubOrderResources.class);
+                .getResource(OrderClientSubResources.class);
 
     }
 

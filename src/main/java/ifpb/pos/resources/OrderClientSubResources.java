@@ -22,17 +22,17 @@ import javax.ws.rs.core.UriInfo;
  * @mail ricardo.job@ifpb.edu.br
  * @since 15/03/2017, 11:20:45
  */
-@Path("/")
+@Path("/{idOrder}/client/{idClient}")
 @Stateless
-public class SubOrderResources {
+public class OrderClientSubResources {
 
     @PersistenceContext
     private EntityManager em;
 
-    public SubOrderResources() {
+    public OrderClientSubResources() {
     }
 
-    public SubOrderResources(EntityManager em) {
+    public OrderClientSubResources(EntityManager em) {
         this.em = em;
     }
 
@@ -55,34 +55,41 @@ public class SubOrderResources {
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response addClientInOrder(
             @PathParam("idOrder") int idOrder,
-            @PathParam("idClient") int idClient) {
+            @PathParam("idClient") int idClient, 
+            @Context UriInfo info) {
 
         Order order = em.find(Order.class, idOrder);
         Client client = em.find(Client.class, idClient);
         order.setClient(client);
-        em.merge(order);
+        Order orderSaved = em.merge(order);
+        
+        OrderSimple orderSimple = new OrderSimple(orderSaved, info);
 
         return Response
                 .ok()
-                .entity(order)
+                .entity(orderSimple)
                 .build();
     }
     
-    @PUT
-//    @Path("product/{idProduct}")
-    @Produces(value = MediaType.APPLICATION_XML)
-    public Response addProductInOrder(
-            @PathParam("idOrder") int idOrder,
-            @PathParam("idProduct") int idProduct) {
-
-        Order order = em.find(Order.class, idOrder);
-        Product product = em.find(Product.class, idProduct);
-        order.addProduct(product);
-        em.merge(order);
-
-        return Response
-                .ok()
-                .entity(order)
-                .build();
-    }
+//    @PUT
+////    @Path("{idOrder}/product/{idProduct}")
+//    @Produces(value = MediaType.APPLICATION_XML)
+////        @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+//    public Response addProductInOrder(
+//            @PathParam("idOrder") int idOrder,
+//            @PathParam("idProduct") int idProduct,
+//            @Context UriInfo info) {
+//
+//        Order order = em.find(Order.class, idOrder);
+//        Product product = em.find(Product.class, idProduct);
+//        order.addProduct(product);
+//        Order orderSaved = em.merge(order);
+//        
+//        OrderSimple orderSimple = new OrderSimple(orderSaved, info);
+//
+//        return Response
+//                .ok()
+//                .entity(orderSimple)
+//                .build();
+//    }
 }
