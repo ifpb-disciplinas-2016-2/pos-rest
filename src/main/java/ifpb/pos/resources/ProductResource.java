@@ -53,6 +53,7 @@ public class ProductResource {
 
     @POST
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response addProduct(Product product) throws URISyntaxException {
         em.persist(product);
         return Response

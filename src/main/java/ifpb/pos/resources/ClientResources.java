@@ -48,7 +48,6 @@ public class ClientResources {
     @Consumes(value = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response addClient(Client client) throws URISyntaxException {
 
-
         em.persist(client);
 
         return Response
